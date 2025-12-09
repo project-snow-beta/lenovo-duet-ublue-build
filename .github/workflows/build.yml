@@ -47,8 +47,8 @@ jobs:
 
       - name: Pull container image
         run: |
-          echo ${{ github.token }} | podman login ghcr.io -u ${{ github.actor }} --password-stdin
-          podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          echo ${{ github.token }} | sudo podman login ghcr.io -u ${{ github.actor }} --password-stdin
+          sudo podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Build ISO
         run: |
