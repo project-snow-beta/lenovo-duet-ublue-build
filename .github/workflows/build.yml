@@ -6,7 +6,6 @@ on:
       - main
     paths-ignore:
       - '**.md'
-
 env:
   IMAGE_NAME: duet-ublue
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
@@ -22,7 +21,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
       - name: Build Custom Image
         uses: blue-build/github-action@v1
         with:
@@ -30,3 +28,56 @@ jobs:
           cosign_private_key: ${{ secrets.SIGNING_SECRET }}
           registry_token: ${{ github.token }}
           pr_event_number: ${{ github.event.number }}
+
+  build_iso:
+    name: Build ARM64 ISO
+    runs-on: ubuntu-24.04-arm
+    needs: build_push  # Wait for container build to finish
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+
+      - name: Pull container image
+        run: |
+          echo ${{ github.token }} | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+          podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Build ISO
+        run: |
+          mkdir -p output
+
+          cat > config.toml << 'EOF'
+          [[customizations.user]]
+          name = "duet"
+          password = "changeme"
+          groups = ["wheel"]
+          EOF
+
+          sudo podman run \
+            --rm \
+            --privileged \
+            --pull=newer \
+            --security-opt label=type:unconfined_t \
+            -v ./config.toml:/config.toml:ro \
+            -v ./output:/output \
+            -v /var/lib/containers/storage:/var/lib/containers/storage \
+            quay.io/centos-bootc/bootc-image-builder:latest \
+            --type anaconda-iso \
+            --rootfs btrfs \
+            --local \
+            localhost/${{ env.IMAGE_NAME }}:latest
+
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: duet-anaconda-iso
+          path: output/bootiso/*.iso
+          retention-days: 7
