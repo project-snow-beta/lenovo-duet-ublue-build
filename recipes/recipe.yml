@@ -1,42 +1,48 @@
 name: duet-ublue
-description: Minimal Fedora for Lenovo Duet (MT8183)
-base-image: quay.io/fedora/fedora-coreos
-image-version: stable
+description: Minimal Fedora for Lenovo Duet (MT8183) - Touch-enabled Xfce4
+base-image: quay.io/fedora/fedora-coreos:43-aarch64
+image-version: latest
 
 modules:
-  # STAGE 1: Install RPMfusion repository configuration packages
   - type: rpm-ostree
+    repos:
+      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-43.noarch.rpm
+      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-43.noarch.rpm
     install:
-      # Use %OS_VERSION% magic string instead of $releasever
-      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-%OS_VERSION%.noarch.rpm
-      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-%OS_VERSION%.noarch.rpm
+      # Desktop environment (Xfce group - verified for aarch64)
+      - @Xfce
 
-  # STAGE 2: Now install packages from the configured repos
-  - type: rpm-ostree
-    install:
-      # --- GRAPHICAL BASE (XFCE) ---
-      - "@xfce-desktop-environment"
+      # Display server (required for graphical output)
       - xorg-x11-server-Xorg
-      - xorg-x11-drv-libinput
+      - xorg-x11-server-utils
+
+      # Display manager (required for login screen)
       - lightdm
       - lightdm-gtk
 
-      # --- HARDWARE SUPPORT ---
-      - kernel-modules-extra
-      - mt7601u-firmware
-      - linux-firmware
+      # Input handling (libinput is the modern standard, replaces synaptics/evdev)
       - libinput
-      - xorg-x11-input-libinput
-      - xorg-x11-input-evdev
-      - xorg-x11-input-synaptics
+      - xorg-x11-drv-libinput
+      - xinput-calibrator
 
-      # --- UTILS ---
-      - network-manager-applet
-      - gnome-disk-utility
+      # Hardware support for MT8183
+      - kernel-modules-extra
+      - linux-firmware           # General firmware (NOT mt7601u-specific)
+
+      # Audio (optional, can be removed if not needed)
+      - pulseaudio
       - pavucontrol
 
-  - type: systemd
-    system:
-      enabled:
-        - lightdm.service
-        - NetworkManager.service
+      # Network management
+      - network-manager-applet
+      - iw
+      - iproute2
+
+      # Utilities
+      - gnome-disk-utility
+      - htop
+      - curl
+      - wget
+      - nano
+      - vim
+      - tmux
