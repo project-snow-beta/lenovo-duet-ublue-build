@@ -10,7 +10,7 @@ modules:
       - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-43.noarch.rpm
     install:
       # Desktop environment (Xfce group - verified for aarch64)
-      - @Xfce
+      - "@Xfce"
       # Display server (required for graphical output)
       - xorg-x11-server-Xorg
       - xorg-x11-server-utils
