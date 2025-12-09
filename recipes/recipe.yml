@@ -9,21 +9,32 @@ modules:
       - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-43.noarch.rpm
       - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-43.noarch.rpm
     install:
-      - "@Xfce"
+      # Desktop environment (individual packages, not @Xfce group)
+      - xfce4
+      - xfce4-session
+      - xfce4-panel
+      - xfce4-terminal
+      - xfce4-settings
+      - xfce4-screensaver
+      # Display server (required for graphical output)
       - xorg-x11-server-Xorg
-      - xorg-x11-server-utils
+      # Display manager (required for login screen)
       - lightdm
       - lightdm-gtk
+      # Input handling (libinput is the modern standard)
       - libinput
       - xorg-x11-drv-libinput
-      - xinput-calibrator
+      # Hardware support for MT8183
       - kernel-modules-extra
       - linux-firmware
+      # Audio (optional, can be removed if not needed)
       - pulseaudio
       - pavucontrol
+      # Network management
       - network-manager-applet
       - iw
-      - iproute2
+      - iproute
+      # Utilities
       - gnome-disk-utility
       - htop
       - curl
