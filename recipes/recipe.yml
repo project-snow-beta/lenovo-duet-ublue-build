@@ -1,44 +1,109 @@
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# Lenovo Chromebook Duet 10.1 (CT-X636F/Krane) - MediaTek Helio P60T
+# Fedora Silverblue 43 aarch64 with Xfce4 desktop
+# Last updated: 2025-12-09
+
 name: duet-ublue
-description: Minimal Fedora for Lenovo Duet (MT8183) - Touch-enabled Xfce4
+description: Minimal Fedora for Lenovo Duet (CT-X636F/Krane) - Touch-enabled Xfce4
+
 base-image: quay.io/fedora/fedora-silverblue
 image-version: "43"
 
 modules:
   - type: rpm-ostree
     repos:
-      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-43.noarch.rpm
-      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-43.noarch.rpm
+      # RPM Fusion repositories using %OS_VERSION% for version compatibility
+      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-%OS_VERSION%.noarch.rpm
+      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-%OS_VERSION%.noarch.rpm
     install:
-      # Desktop environment (individual packages, not @Xfce group)
-      - xfce4
-      - xfce4-session
+      # ===========================================
+      # XFCE CORE COMPONENTS (verified in Fedora 43)
+      # ===========================================
+      # Window Manager - handles window placement, decorations, workspaces
+      - xfwm4
+      # Desktop Manager - background, icons, root window menu
+      - xfdesktop
+      # Panel - taskbar, app launcher, system tray
       - xfce4-panel
-      - xfce4-terminal
+      # Session Manager - login/logout, session persistence
+      - xfce4-session
+      # Settings Manager - system configuration UI
       - xfce4-settings
+      # Configuration daemon - stores Xfce settings
+      - xfconf
+      # Terminal emulator
+      - xfce4-terminal
+      # Application finder/launcher
+      - xfce4-appfinder
+      # File manager (note: capital T in Fedora)
+      - Thunar
+      # Screensaver/lock screen
       - xfce4-screensaver
-      # Display server (required for graphical output)
+      # Power management (important for tablet)
+      - xfce4-power-manager
+
+      # ===========================================
+      # DISPLAY SERVER & DRIVERS
+      # ===========================================
       - xorg-x11-server-Xorg
-      # Display manager (required for login screen)
+      - xorg-x11-drv-libinput
+      - libinput
+      # Mesa for Mali GPU support
+      - mesa-dri-drivers
+
+      # ===========================================
+      # DISPLAY MANAGER (login screen)
+      # ===========================================
       - lightdm
       - lightdm-gtk
-      # Input handling (libinput is the modern standard)
-      - libinput
-      - xorg-x11-drv-libinput
-      # Hardware support for MT8183
+
+      # ===========================================
+      # HARDWARE SUPPORT (MediaTek P60T / Krane)
+      # ===========================================
       - kernel-modules-extra
       - linux-firmware
-      # Audio (optional, can be removed if not needed)
-      - pulseaudio
+      # ARM-specific firmware
+      - arm-image-installer
+
+      # ===========================================
+      # AUDIO
+      # ===========================================
+      # Using PipeWire (modern default in Fedora)
+      - pipewire
+      - pipewire-pulseaudio
+      - wireplumber
+      # Volume control applet
       - pavucontrol
-      # Network management
+
+      # ===========================================
+      # NETWORKING
+      # ===========================================
+      - NetworkManager
+      - NetworkManager-wifi
       - network-manager-applet
       - iw
       - iproute
-      # Utilities
+      - wpa_supplicant
+
+      # ===========================================
+      # UTILITIES
+      # ===========================================
       - gnome-disk-utility
       - htop
       - curl
       - wget
       - nano
-      - vim
+      - vim-minimal
       - tmux
+      # For debugging hardware
+      - lshw
+      - usbutils
+      - pciutils
+
+  # Enable lightdm as default display manager
+  - type: systemd
+    system:
+      enabled:
+        - lightdm.service
+      disabled:
+        - gdm.service
