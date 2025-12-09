@@ -11,33 +11,26 @@ modules:
     install:
       # Desktop environment (Xfce group - verified for aarch64)
       - @Xfce
-
       # Display server (required for graphical output)
       - xorg-x11-server-Xorg
       - xorg-x11-server-utils
-
       # Display manager (required for login screen)
       - lightdm
       - lightdm-gtk
-
       # Input handling (libinput is the modern standard, replaces synaptics/evdev)
       - libinput
       - xorg-x11-drv-libinput
       - xinput-calibrator
-
       # Hardware support for MT8183
       - kernel-modules-extra
-      - linux-firmware           # General firmware (NOT mt7601u-specific)
-
+      - linux-firmware
       # Audio (optional, can be removed if not needed)
       - pulseaudio
       - pavucontrol
-
       # Network management
       - network-manager-applet
       - iw
       - iproute2
-
       # Utilities
       - gnome-disk-utility
       - htop
