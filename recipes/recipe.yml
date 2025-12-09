@@ -1,13 +1,18 @@
 name: duet-ublue
 description: Minimal Fedora for Lenovo Duet (MT8183)
 base-image: quay.io/fedora/fedora-coreos
-image-version: stable # or use "stable" for the latest stable release
+image-version: stable
 
 modules:
+  # STAGE 1: Install RPMfusion repository configuration packages
   - type: rpm-ostree
-    repos:
+    install:
+      # These .rpm files configure the RPMfusion repos
       - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$releasever.noarch.rpm
       - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$releasever.noarch.rpm
+
+  # STAGE 2: Now install packages from the configured repos
+  - type: rpm-ostree
     install:
       # --- GRAPHICAL BASE (XFCE) ---
       - "@xfce-desktop-environment"
@@ -29,3 +34,9 @@ modules:
       - network-manager-applet
       - gnome-disk-utility
       - pavucontrol
+
+  - type: systemd
+    system:
+      enabled:
+        - lightdm.service
+        - NetworkManager.service
