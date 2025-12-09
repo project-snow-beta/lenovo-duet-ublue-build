@@ -7,9 +7,9 @@ modules:
   # STAGE 1: Install RPMfusion repository configuration packages
   - type: rpm-ostree
     install:
-      # These .rpm files configure the RPMfusion repos
-      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$releasever.noarch.rpm
-      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$releasever.noarch.rpm
+      # Use %OS_VERSION% magic string instead of $releasever
+      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-%OS_VERSION%.noarch.rpm
+      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-%OS_VERSION%.noarch.rpm
 
   # STAGE 2: Now install packages from the configured repos
   - type: rpm-ostree
