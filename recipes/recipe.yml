@@ -6,8 +6,8 @@ image-version: stable # or use "stable" for the latest stable release
 modules:
   - type: rpm-ostree
     repos:
-      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
-      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$releasever.noarch.rpm
+      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$releasever.noarch.rpm
     install:
       # --- GRAPHICAL BASE (XFCE) ---
       - "@xfce-desktop-environment"
@@ -29,10 +29,3 @@ modules:
       - network-manager-applet
       - gnome-disk-utility
       - pavucontrol
-      # Remove or fix: - onbo
-
-  - type: systemd
-    system:
-      enabled:
-        - lightdm.service
-        - NetworkManager.service
