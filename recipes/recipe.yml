@@ -1,8 +1,7 @@
-# recipes/recipe.yml
 name: duet-ublue
 description: Minimal Fedora for Lenovo Duet (MT8183)
-base-image: quay.io/fedora/fedora-coreos:stable
-image-version: 41 # or latest stable
+base-image: quay.io/fedora/fedora-coreos
+image-version: stable # or use "stable" for the latest stable release
 
 modules:
   - type: rpm-ostree
@@ -24,14 +23,13 @@ modules:
       - libinput
       - xorg-x11-input-libinput
       - xorg-x11-input-evdev
-      # The driver for your HID-over-I2C touchscreen
       - xorg-x11-input-synaptics
 
       # --- UTILS ---
       - network-manager-applet
       - gnome-disk-utility
       - pavucontrol
-      - onbo
+      # Remove or fix: - onbo
 
   - type: systemd
     system:
