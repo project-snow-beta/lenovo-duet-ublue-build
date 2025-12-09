@@ -1,0 +1,32 @@
+# .github/workflows/build.yml
+name: Build Duet Image
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+env:
+  IMAGE_NAME: duet-ublue
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+
+jobs:
+  build_push:
+    name: Build and Push Image
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build Custom Image
+        uses: blue-build/github-action@v1
+        with:
+          recipe: recipes/recipe.yml
+          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+          registry_token: ${{ github.token }}
+          pr_event_number: ${{ github.event.number }}
