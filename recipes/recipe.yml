@@ -1,7 +1,7 @@
 name: duet-ublue
 description: Minimal Fedora for Lenovo Duet (MT8183) - Touch-enabled Xfce4
-base-image: quay.io/fedora/fedora-coreos:43-aarch64
-image-version: latest
+base-image: quay.io/fedora/fedora-silverblue
+image-version: "43"
 
 modules:
   - type: rpm-ostree
@@ -9,29 +9,21 @@ modules:
       - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-43.noarch.rpm
       - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-43.noarch.rpm
     install:
-      # Desktop environment (Xfce group - verified for aarch64)
       - "@Xfce"
-      # Display server (required for graphical output)
       - xorg-x11-server-Xorg
       - xorg-x11-server-utils
-      # Display manager (required for login screen)
       - lightdm
       - lightdm-gtk
-      # Input handling (libinput is the modern standard, replaces synaptics/evdev)
       - libinput
       - xorg-x11-drv-libinput
       - xinput-calibrator
-      # Hardware support for MT8183
       - kernel-modules-extra
       - linux-firmware
-      # Audio (optional, can be removed if not needed)
       - pulseaudio
       - pavucontrol
-      # Network management
       - network-manager-applet
       - iw
       - iproute2
-      # Utilities
       - gnome-disk-utility
       - htop
       - curl
@@ -39,4 +31,3 @@ modules:
       - nano
       - vim
       - tmux
-
