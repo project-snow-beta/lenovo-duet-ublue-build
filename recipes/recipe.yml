@@ -1,0 +1,41 @@
+# recipes/recipe.yml
+name: duet-ublue
+description: Minimal Fedora for Lenovo Duet (MT8183)
+base-image: quay.io/fedora/fedora-coreos:stable
+image-version: 41 # or latest stable
+arch: aarch64 # Critical for ARM tablet
+
+modules:
+  - type: rpm-ostree
+    repos:
+      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+    install:
+      # --- GRAPHICAL BASE (XFCE) ---
+      - @xfce-desktop-environment
+      - xorg-x11-server-Xorg
+      - xorg-x11-drv-libinput
+      - lightdm
+      - lightdm-gtk
+
+      # --- HARDWARE SUPPORT ---
+      - kernel-modules-extra
+      - mt7601u-firmware
+      - linux-firmware
+      - libinput
+      - xorg-x11-input-libinput
+      - xorg-x11-input-evdev
+      # The driver for your HID-over-I2C touchscreen
+      - xorg-x11-input-synaptics
+
+      # --- UTILS ---
+      - network-manager-applet
+      - gnome-disk-utility
+      - pavucontrol
+      - onbo
+
+  - type: systemd
+    system:
+      enabled:
+        - lightdm.service
+        - NetworkManager.service
