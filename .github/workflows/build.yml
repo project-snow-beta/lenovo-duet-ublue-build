@@ -73,7 +73,7 @@ jobs:
             --type anaconda-iso \
             --rootfs btrfs \
             --local \
-            localhost/${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Upload ISO
         uses: actions/upload-artifact@v4
